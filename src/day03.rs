@@ -1,5 +1,4 @@
 use std::{
-    collections::HashSet,
     fs::File,
     io::{BufRead, BufReader},
 };
@@ -52,23 +51,17 @@ fn _b(lines: Vec<String>) -> u64 {
     let mut total = 0u64;
     let mut idx = 0;
     while idx < lines.len() {
-        let mut common = HashSet::new();
-
-        // Find common items between elf 1 and 2
-        for c in lines[idx].chars() {
+        'outer: for c in lines[idx].chars() {
             for c2 in lines[idx + 1].chars() {
-                if c == c2 {
-                    common.insert(c);
+                if c != c2 {
+                    continue;
                 }
-            }
-        }
 
-        // Find common items between result and elf 3
-        'outer: for c in common.iter() {
-            for c3 in lines[idx + 2].chars() {
-                if *c == c3 {
-                    total += value(c3 as u8);
-                    break 'outer
+                for c3 in lines[idx + 2].chars() {
+                    if c == c3 {
+                        total += value(c3 as u8);
+                        break 'outer;
+                    }
                 }
             }
         }
