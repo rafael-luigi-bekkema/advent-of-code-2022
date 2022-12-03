@@ -1,5 +1,7 @@
+#![feature(hash_drain_filter)]
 mod day01;
 mod day02;
+mod day03;
 
 fn main() {
     println!("Advent of Code 2022!");
@@ -9,4 +11,7 @@ fn main() {
 
     println!("day 2a: {}", day02::a());
     println!("day 2b: {}", day02::b());
+
+    println!("day 3a: {}", day03::a());
+    println!("day 3b: {}", day03::b());
 }
