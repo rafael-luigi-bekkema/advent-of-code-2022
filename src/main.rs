@@ -1,6 +1,7 @@
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 fn main() {
     println!("Advent of Code 2022!");
@@ -13,4 +14,7 @@ fn main() {
 
     println!("day 3a: {}", day03::a());
     println!("day 3b: {}", day03::b());
+
+    println!("day 4a: {}", day04::a());
+    println!("day 4b: {}", day04::b());
 }
