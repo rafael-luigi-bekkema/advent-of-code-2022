@@ -1,4 +1,7 @@
-use std::{fs::File, io::{BufReader, BufRead}};
+use std::{
+    fs::File,
+    io::{BufRead, BufReader},
+};
 
 fn load_file() -> Vec<String> {
     let f = File::open("inputs/day05.txt").unwrap();
@@ -14,20 +17,20 @@ pub fn b() -> String {
     _b(load_file())
 }
 
-fn _a(input: Vec<String>) -> String {
+fn parse_stacks(input: &Vec<String>) -> (Vec<Vec<char>>, usize) {
     let mut stacks: Vec<Vec<char>> = Vec::new();
     let mut line_nr = 0;
     for (l, line) in input.iter().enumerate() {
         if line == "" {
             line_nr = l;
-            break
+            break;
         }
         for (i, char) in line.chars().enumerate() {
             if i == 0 || char == ' ' {
                 continue;
             }
-            if (i-1) % 4 == 0 {
-                let stack = (i-1) / 4;
+            if (i - 1) % 4 == 0 {
+                let stack = (i - 1) / 4;
                 while stack >= stacks.len() {
                     stacks.push(Vec::new());
                 }
@@ -41,15 +44,33 @@ fn _a(input: Vec<String>) -> String {
         stack.reverse();
     }
 
-    for line in input[line_nr+1..].iter() {
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        let mov = parts[1].parse::<u64>().unwrap();
-        let from = parts[3].parse::<usize>().unwrap();
-        let to = parts[5].parse::<usize>().unwrap();
+    (stacks, line_nr)
+}
 
-        for _i in 0..mov {
-            let item = stacks[from-1].pop().unwrap();
-            stacks[to-1].push(item);
+struct Move {
+    count: usize,
+    from: usize,
+    to: usize,
+}
+
+fn parse_move(line: &str) -> Move {
+    let parts: Vec<&str> = line.split_whitespace().collect();
+    Move {
+        count: parts[1].parse::<usize>().unwrap(),
+        from: parts[3].parse::<usize>().unwrap(),
+        to: parts[5].parse::<usize>().unwrap(),
+    }
+}
+
+fn _a(input: Vec<String>) -> String {
+    let (mut stacks, line_nr) = parse_stacks(&input);
+
+    for line in input[line_nr + 1..].iter() {
+        let mov = parse_move(line);
+
+        for _i in 0..mov.count {
+            let item = stacks[mov.from - 1].pop().unwrap();
+            stacks[mov.to - 1].push(item);
         }
     }
 
@@ -58,52 +79,22 @@ fn _a(input: Vec<String>) -> String {
         let top = stack.pop().unwrap();
         result.push(top);
     }
-
 
     result.iter().collect()
 }
 
 fn _b(input: Vec<String>) -> String {
-    let mut stacks: Vec<Vec<char>> = Vec::new();
-    let mut line_nr = 0;
-    for (l, line) in input.iter().enumerate() {
-        if line == "" {
-            line_nr = l;
-            break
-        }
-        for (i, char) in line.chars().enumerate() {
-            if i == 0 || char == ' ' {
-                continue;
-            }
-            if (i-1) % 4 == 0 {
-                let stack = (i-1) / 4;
-                while stack >= stacks.len() {
-                    stacks.push(Vec::new());
-                }
-                stacks[stack].push(char);
-            }
-        }
-    }
+    let (mut stacks, line_nr) = parse_stacks(&input);
 
-    for stack in stacks.iter_mut() {
-        stack.pop();
-        stack.reverse();
-    }
+    for line in input[line_nr + 1..].iter() {
+        let mov = parse_move(line);
+        let len = stacks[mov.from - 1].len();
 
-    for line in input[line_nr+1..].iter() {
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        let mov = parts[1].parse::<u64>().unwrap();
-        let from = parts[3].parse::<usize>().unwrap();
-        let to = parts[5].parse::<usize>().unwrap();
-
-        let mut buffer = Vec::new();
-        for _i in 0..mov {
-            let item = stacks[from-1].pop().unwrap();
-            buffer.push(item);
-        }
-
-        for item in buffer.iter().rev() {
-            stacks[to-1].push(*item);
+        let moved: Vec<char> = stacks[mov.from - 1]
+            .splice(len - mov.count.., vec![])
+            .collect();
+        for item in moved {
+            stacks[mov.to - 1].push(item);
         }
     }
 
@@ -113,9 +104,7 @@ fn _b(input: Vec<String>) -> String {
         result.push(top);
     }
 
-
     result.iter().collect()
-
 }
 
 #[cfg(test)]
@@ -132,7 +121,10 @@ mod tests {
 move 1 from 2 to 1
 move 3 from 1 to 3
 move 2 from 2 to 1
-move 1 from 1 to 2".split_terminator("\n").map(|l| l.to_string()).collect();
+move 1 from 1 to 2"
+            .split_terminator("\n")
+            .map(|l| l.to_string())
+            .collect();
         assert_eq!("CMZ", _a(input))
     }
 
@@ -151,7 +143,10 @@ move 1 from 1 to 2".split_terminator("\n").map(|l| l.to_string()).collect();
 move 1 from 2 to 1
 move 3 from 1 to 3
 move 2 from 2 to 1
-move 1 from 1 to 2".split_terminator("\n").map(|l| l.to_string()).collect();
+move 1 from 1 to 2"
+            .split_terminator("\n")
+            .map(|l| l.to_string())
+            .collect();
         assert_eq!("MCD", _b(input))
     }
 
@@ -160,4 +155,3 @@ move 1 from 1 to 2".split_terminator("\n").map(|l| l.to_string()).collect();
         assert_eq!("BNTZFPMMW", _b(load_file()));
     }
 }
-
