@@ -1,13 +1,4 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
-
-fn load_file() -> Vec<String> {
-    let f = File::open("inputs/day04.txt").unwrap();
-
-    BufReader::new(f).lines().map(|l| l.unwrap()).collect()
-}
+use crate::aoc::load_lines;
 
 fn parse_range(range: &str) -> (u64, u64) {
     let (e1a, e1b) = range.split_once("-").unwrap();
@@ -46,11 +37,11 @@ fn _b(lines: Vec<String>) -> u64 {
 }
 
 pub fn a() -> u64 {
-    _a(load_file())
+    _a(load_lines(4))
 }
 
 pub fn b() -> u64 {
-    _b(load_file())
+    _b(load_lines(4))
 }
 
 #[cfg(test)]
@@ -72,7 +63,7 @@ mod tests {
 
     #[test]
     fn a2() {
-        assert_eq!(431, _a(load_file()));
+        assert_eq!(431, _a(load_lines(4)));
     }
 
     #[test]
@@ -90,6 +81,6 @@ mod tests {
 
     #[test]
     fn b2() {
-        assert_eq!(823, _b(load_file()));
+        assert_eq!(823, _b(load_lines(4)));
     }
 }

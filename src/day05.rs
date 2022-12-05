@@ -1,20 +1,11 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
-
-fn load_file() -> Vec<String> {
-    let f = File::open("inputs/day05.txt").unwrap();
-
-    BufReader::new(f).lines().map(|l| l.unwrap()).collect()
-}
+use crate::aoc::load_lines;
 
 pub fn a() -> String {
-    _a(load_file())
+    _a(load_lines(5))
 }
 
 pub fn b() -> String {
-    _b(load_file())
+    _b(load_lines(5))
 }
 
 fn parse_stacks(input: &Vec<String>) -> (Vec<Vec<char>>, usize) {
@@ -130,7 +121,7 @@ move 1 from 1 to 2"
 
     #[test]
     fn a2() {
-        assert_eq!("PSNRGBTFT", _a(load_file()));
+        assert_eq!("PSNRGBTFT", _a(load_lines(5)));
     }
 
     #[test]
@@ -152,6 +143,6 @@ move 1 from 1 to 2"
 
     #[test]
     fn b2() {
-        assert_eq!("BNTZFPMMW", _b(load_file()));
+        assert_eq!("BNTZFPMMW", _b(load_lines(5)));
     }
 }

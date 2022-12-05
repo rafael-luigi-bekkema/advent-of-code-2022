@@ -1,22 +1,12 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader}, collections::HashMap,
-};
-
-fn load_from_file() -> Vec<String> {
-    let f = File::open("inputs/day01.txt").unwrap();
-    BufReader::new(f)
-        .lines()
-        .map(|line| line.unwrap())
-        .collect()
-}
+use crate::aoc::load_lines;
+use std::collections::HashMap;
 
 pub fn a() -> u64 {
-    _a(load_from_file())
+    _a(load_lines(1))
 }
 
 pub fn b() -> u64 {
-    _b(load_from_file())
+    _b(load_lines(1))
 }
 
 fn _a(lines: Vec<String>) -> u64 {
@@ -93,10 +83,7 @@ mod tests {
 
     #[test]
     fn a2() {
-        assert_eq!(
-            71124,
-            _a(load_from_file())
-        );
+        assert_eq!(71124, _a(load_lines(1)));
     }
 
     #[test]
@@ -124,9 +111,6 @@ mod tests {
 
     #[test]
     fn b2() {
-        assert_eq!(
-            204639,
-            _b(load_from_file())
-        );
+        assert_eq!(204639, _b(load_lines(1)));
     }
 }

@@ -1,7 +1,4 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+use crate::aoc::load_lines;
 
 #[derive(Clone)]
 enum RPC {
@@ -46,9 +43,7 @@ impl RPC {
                 RPC::Paper => RPC::Scissors,
                 RPC::Scissors => RPC::Rock,
             },
-            Outcome::Draw => {
-                self.clone()
-            },
+            Outcome::Draw => self.clone(),
             Outcome::Lose => match self {
                 RPC::Rock => RPC::Scissors,
                 RPC::Paper => RPC::Rock,
@@ -106,20 +101,15 @@ fn parse_round_b(line: String) -> RoundB {
     }
 }
 
-fn load_from_file() -> Vec<String> {
-    let f = File::open("inputs/day02.txt").unwrap();
-    BufReader::new(f).lines().map(|l| l.unwrap()).collect()
-}
-
 fn load_from_file_a() -> Vec<Round> {
-    load_from_file()
+    load_lines(2)
         .into_iter()
         .map(|line| parse_round(line))
         .collect()
 }
 
 fn load_from_file_b() -> Vec<RoundB> {
-    load_from_file()
+    load_lines(2)
         .into_iter()
         .map(|line| parse_round_b(line))
         .collect()

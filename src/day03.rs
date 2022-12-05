@@ -1,13 +1,4 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
-
-fn load_file() -> Vec<String> {
-    let f = File::open("inputs/day03.txt").unwrap();
-
-    BufReader::new(f).lines().map(|l| l.unwrap()).collect()
-}
+use crate::aoc::load_lines;
 
 fn value(c: u8) -> u64 {
     (c - if c >= 97 {
@@ -21,7 +12,7 @@ fn value(c: u8) -> u64 {
 }
 
 pub fn a() -> u64 {
-    _a(load_file())
+    _a(load_lines(3))
 }
 
 fn _a(lines: Vec<String>) -> u64 {
@@ -44,7 +35,7 @@ fn _a(lines: Vec<String>) -> u64 {
 }
 
 pub fn b() -> u64 {
-    _b(load_file())
+    _b(load_lines(3))
 }
 
 fn _b(lines: Vec<String>) -> u64 {
@@ -96,7 +87,7 @@ mod tests {
 
     #[test]
     fn a2() {
-        assert_eq!(8493, _a(load_file()));
+        assert_eq!(8493, _a(load_lines(3)));
     }
 
     #[test]
@@ -119,6 +110,6 @@ mod tests {
 
     #[test]
     fn b2() {
-        assert_eq!(2552, _b(load_file()));
+        assert_eq!(2552, _b(load_lines(3)));
     }
 }
