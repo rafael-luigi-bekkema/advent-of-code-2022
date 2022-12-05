@@ -8,11 +8,11 @@ pub fn b() -> String {
     _b(load_lines(5))
 }
 
-fn parse_stacks(input: &Vec<String>) -> (Vec<Vec<char>>, usize) {
+fn parse_stacks(input: &[String]) -> (Vec<Vec<char>>, usize) {
     let mut stacks: Vec<Vec<char>> = Vec::new();
     let mut line_nr = 0;
     for (l, line) in input.iter().enumerate() {
-        if line == "" {
+        if line.is_empty() {
             line_nr = l;
             break;
         }

@@ -1,7 +1,7 @@
 use crate::aoc::load_lines;
 
 fn parse_range(range: &str) -> (u64, u64) {
-    let (e1a, e1b) = range.split_once("-").unwrap();
+    let (e1a, e1b) = range.split_once('-').unwrap();
     (e1a.parse::<u64>().unwrap(), e1b.parse::<u64>().unwrap())
 }
 
@@ -9,7 +9,7 @@ fn _a(lines: Vec<String>) -> u64 {
     let mut count = 0u64;
 
     for line in lines.iter() {
-        let (one, two) = line.split_once(",").unwrap();
+        let (one, two) = line.split_once(',').unwrap();
         let (e1a, e1b) = parse_range(one);
         let (e2a, e2b) = parse_range(two);
         if e2a >= e1a && e2b <= e1b || e1a >= e2a && e1b <= e2b {
@@ -24,7 +24,7 @@ fn _b(lines: Vec<String>) -> u64 {
     let mut count = 0u64;
 
     for line in lines.iter() {
-        let (one, two) = line.split_once(",").unwrap();
+        let (one, two) = line.split_once(',').unwrap();
         let (e1a, e1b) = parse_range(one);
         let (e2a, e2b) = parse_range(two);
         if e1b < e2a || e1a > e2b {

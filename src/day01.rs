@@ -14,7 +14,7 @@ fn _a(lines: Vec<String>) -> u64 {
 
     let mut elf = 1u64;
     for line in lines.iter() {
-        if line == "" {
+        if line.is_empty() {
             elf += 1;
             continue;
         }
@@ -38,7 +38,7 @@ fn _b(lines: Vec<String>) -> u64 {
 
     let mut elf = 1u64;
     for line in lines.iter() {
-        if line == "" {
+        if line.is_empty() {
             elf += 1;
             continue;
         }
@@ -51,7 +51,7 @@ fn _b(lines: Vec<String>) -> u64 {
     counts.sort();
     counts.reverse();
 
-    counts[0..3].into_iter().sum()
+    counts[0..3].iter().sum()
 }
 
 #[cfg(test)]

@@ -1,53 +1,53 @@
 use crate::aoc::load_lines;
 
 #[derive(Clone)]
-enum RPC {
+enum Rpc {
     Rock,
     Paper,
     Scissors,
 }
 
-impl RPC {
+impl Rpc {
     fn score(&self) -> u64 {
         match self {
-            RPC::Rock => 1,
-            RPC::Paper => 2,
-            RPC::Scissors => 3,
+            Rpc::Rock => 1,
+            Rpc::Paper => 2,
+            Rpc::Scissors => 3,
         }
     }
 
-    fn points(&self, against: &RPC) -> u64 {
+    fn points(&self, against: &Rpc) -> u64 {
         match self {
-            RPC::Rock => match against {
-                RPC::Rock => 3,
-                RPC::Paper => 0,
-                RPC::Scissors => 6,
+            Rpc::Rock => match against {
+                Rpc::Rock => 3,
+                Rpc::Paper => 0,
+                Rpc::Scissors => 6,
             },
-            RPC::Paper => match against {
-                RPC::Rock => 6,
-                RPC::Paper => 3,
-                RPC::Scissors => 0,
+            Rpc::Paper => match against {
+                Rpc::Rock => 6,
+                Rpc::Paper => 3,
+                Rpc::Scissors => 0,
             },
-            RPC::Scissors => match against {
-                RPC::Rock => 0,
-                RPC::Paper => 6,
-                RPC::Scissors => 3,
+            Rpc::Scissors => match against {
+                Rpc::Rock => 0,
+                Rpc::Paper => 6,
+                Rpc::Scissors => 3,
             },
         }
     }
 
-    fn counter(&self, outcome: Outcome) -> RPC {
+    fn counter(&self, outcome: Outcome) -> Rpc {
         match outcome {
             Outcome::Win => match self {
-                RPC::Rock => RPC::Paper,
-                RPC::Paper => RPC::Scissors,
-                RPC::Scissors => RPC::Rock,
+                Rpc::Rock => Rpc::Paper,
+                Rpc::Paper => Rpc::Scissors,
+                Rpc::Scissors => Rpc::Rock,
             },
             Outcome::Draw => self.clone(),
             Outcome::Lose => match self {
-                RPC::Rock => RPC::Scissors,
-                RPC::Paper => RPC::Rock,
-                RPC::Scissors => RPC::Paper,
+                Rpc::Rock => Rpc::Scissors,
+                Rpc::Paper => Rpc::Rock,
+                Rpc::Scissors => Rpc::Paper,
             },
         }
     }
@@ -60,38 +60,38 @@ enum Outcome {
 }
 
 struct Round {
-    opponent: RPC,
-    you: RPC,
+    opponent: Rpc,
+    you: Rpc,
 }
 
 struct RoundB {
-    opponent: RPC,
+    opponent: Rpc,
     outcome: Outcome,
 }
 
 fn parse_round(line: String) -> Round {
-    let (opp, you) = line.split_once(" ").unwrap();
+    let (opp, you) = line.split_once(' ').unwrap();
     Round {
         opponent: match opp {
-            "A" => RPC::Rock,
-            "B" => RPC::Paper,
-            _ => RPC::Scissors,
+            "A" => Rpc::Rock,
+            "B" => Rpc::Paper,
+            _ => Rpc::Scissors,
         },
         you: match you {
-            "X" => RPC::Rock,
-            "Y" => RPC::Paper,
-            _ => RPC::Scissors,
+            "X" => Rpc::Rock,
+            "Y" => Rpc::Paper,
+            _ => Rpc::Scissors,
         },
     }
 }
 
 fn parse_round_b(line: String) -> RoundB {
-    let (opp, out) = line.split_once(" ").unwrap();
+    let (opp, out) = line.split_once(' ').unwrap();
     RoundB {
         opponent: match opp {
-            "A" => RPC::Rock,
-            "B" => RPC::Paper,
-            _ => RPC::Scissors,
+            "A" => Rpc::Rock,
+            "B" => Rpc::Paper,
+            _ => Rpc::Scissors,
         },
         outcome: match out {
             "X" => Outcome::Lose,
@@ -104,14 +104,14 @@ fn parse_round_b(line: String) -> RoundB {
 fn load_from_file_a() -> Vec<Round> {
     load_lines(2)
         .into_iter()
-        .map(|line| parse_round(line))
+        .map(parse_round)
         .collect()
 }
 
 fn load_from_file_b() -> Vec<RoundB> {
     load_lines(2)
         .into_iter()
-        .map(|line| parse_round_b(line))
+        .map(parse_round_b)
         .collect()
 }
 
