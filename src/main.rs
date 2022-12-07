@@ -4,6 +4,7 @@ mod day03;
 mod day04;
 mod day05;
 mod day06;
+mod day07;
 mod aoc;
 
 fn main() {
@@ -26,4 +27,7 @@ fn main() {
 
     println!("day 6a: {}", day06::a());
     println!("day 6b: {}", day06::b());
+
+    println!("day 7a: {}", day07::a());
+    println!("day 7b: {}", day07::b());
 }
