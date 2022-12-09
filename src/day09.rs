@@ -28,12 +28,10 @@ fn move_tail(head: &Pos, tail: &mut Pos) {
     if (head.x - tail.x).abs() <= 1 && (head.y - tail.y).abs() <= 1 {
         return;
     }
-    if head.x == tail.x {
+    if head.y != tail.y {
         tail.y += (head.y - tail.y) / (head.y - tail.y).abs();
-    } else if head.y == tail.y {
-        tail.x += (head.x - tail.x) / (head.x - tail.x).abs();
-    } else {
-        tail.y += (head.y - tail.y) / (head.y - tail.y).abs();
+    }
+    if head.x != tail.x {
         tail.x += (head.x - tail.x) / (head.x - tail.x).abs();
     }
 }
