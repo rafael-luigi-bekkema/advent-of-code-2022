@@ -1,7 +1,11 @@
 use std::{fs::File, io::{BufReader, BufRead, Read}};
 
 pub fn load_lines(day: usize) -> Vec<String> {
-    let name = format!("inputs/day{:02}.txt", day);
+    load_lines_suffix(day, "")
+}
+
+pub fn load_lines_suffix(day: usize, suffix: &str) -> Vec<String> {
+    let name = format!("inputs/day{:02}{}.txt", day, suffix);
     let f = File::open(&name).unwrap_or_else(|_| panic!("could not open file: {}", &name));
     BufReader::new(f)
         .lines()
