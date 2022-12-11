@@ -58,12 +58,12 @@ fn _ab(moves: Vec<impl AsRef<str>>, nr_tails: usize) -> usize {
 
             let mut head2 = &head;
             for tail in tails.iter_mut() {
-                move_tail(&head2, tail);
+                move_tail(head2, tail);
 
                 head2 = tail;
             }
 
-            tail_poss.insert(head2.clone());
+            tail_poss.insert(*head2);
         }
     }
 

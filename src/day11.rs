@@ -65,7 +65,7 @@ fn parse_monkeys(input: Vec<&str>) -> Vec<Monkey> {
         }
         if line.starts_with("  Operation: new = ") {
             let sop: String = line.chars().skip(19).collect();
-            let op: Vec<&str> = sop.split(" ").collect();
+            let op: Vec<&str> = sop.split(' ').collect();
             match op[1] {
                 "*" => monkey.op = Op::Mul,
                 "+" => monkey.op = Op::Add,

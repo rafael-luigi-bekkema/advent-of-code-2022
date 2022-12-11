@@ -8,7 +8,7 @@ pub fn b() -> u64 {
     _b(load_lines(1))
 }
 
-fn parse_lines(lines: &Vec<impl AsRef<str>>) -> Vec<u64> {
+fn parse_lines(lines: &[impl AsRef<str>]) -> Vec<u64> {
     let mut counts = Vec::from([0u64]);
 
     for line in lines.iter().map(|l| l.as_ref()) {
@@ -16,7 +16,7 @@ fn parse_lines(lines: &Vec<impl AsRef<str>>) -> Vec<u64> {
             counts.push(0);
             continue;
         }
-        counts.last_mut().map(|v| *v += line.parse::<u64>().unwrap());
+        *counts.last_mut().unwrap() += line.parse::<u64>().unwrap();
     }
 
     counts
