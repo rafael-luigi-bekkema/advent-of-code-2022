@@ -6,6 +6,10 @@ pub fn a() -> u64 {
     _a(load_lines(11))
 }
 
+pub fn b() -> u64 {
+    _b(load_lines(11))
+}
+
 #[derive(Clone, Debug)]
 enum Op {
     Add,
@@ -36,11 +40,15 @@ struct Monkey {
 
 fn parse_monkeys(input: Vec<&str>) -> Vec<Monkey> {
     let mut monkeys = vec![];
-    let mut monkey = Monkey{
+    let mut monkey = Monkey {
         items: VecDeque::new(),
         on: On::Old,
         op: Op::Add,
-        test: Test{div: 0, if_true: 0, if_false: 0},
+        test: Test {
+            div: 0,
+            if_true: 0,
+            if_false: 0,
+        },
         inspects: 0,
     };
 
@@ -125,10 +133,27 @@ fn _a(input: Vec<impl AsRef<str>>) -> u64 {
     inspects[0] * inspects[1]
 }
 
+fn lcm(nums: &mut [u64]) -> u64 {
+    nums.sort();
+    let mut base = nums[0];
+    'outer: loop {
+        for item in nums.iter().skip(1) {
+            if (base % *item) != 0 {
+                base += nums[0];
+                continue 'outer;
+            }
+        }
+        break;
+    }
+    base
+}
+
 fn _b(input: Vec<impl AsRef<str>>) -> u64 {
     let mut monkeys = parse_monkeys(input.iter().map(|v| v.as_ref()).collect());
 
-    for _round in 0..20 {
+    let common_div = lcm(&mut monkeys.iter().map(|m| m.test.div).collect::<Vec<u64>>());
+
+    for _round in 0..10_000 {
         for i in 0..monkeys.len() {
             let mut monkey = monkeys[i].clone();
             monkeys[i].items.clear();
@@ -149,7 +174,7 @@ fn _b(input: Vec<impl AsRef<str>>) -> u64 {
                 };
 
                 monkeys[i].inspects += 1;
-                monkeys[to].items.push_back(newval);
+                monkeys[to].items.push_back(newval % common_div);
             }
         }
     }
@@ -168,6 +193,11 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_lcm() {
+        assert_eq!(96_577, lcm(&mut [23, 19, 13, 17]))
+    }
+
+    #[test]
     fn a() {
         assert_eq!(10605, _a(load_lines_suffix(11, "_test")));
     }
@@ -180,5 +210,10 @@ mod tests {
     #[test]
     fn b() {
         assert_eq!(2713310158, _b(load_lines_suffix(11, "_test")));
+    }
+
+    #[test]
+    fn b2() {
+        assert_eq!(25712998901, _b(load_lines(11)));
     }
 }

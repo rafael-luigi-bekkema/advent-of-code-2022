@@ -45,4 +45,5 @@ fn main() {
     println!("day 10b: {}", day10::b());
 
     println!("day 11a: {}", day11::a());
+    println!("day 11b: {}", day11::b());
 }
