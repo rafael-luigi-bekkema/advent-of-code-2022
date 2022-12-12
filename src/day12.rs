@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap};
+use std::{collections::{BTreeMap, HashMap, BinaryHeap, HashSet}, cmp::Ordering};
 
 use crate::aoc::load_lines;
 
@@ -63,7 +63,7 @@ fn create_nodes(map: Map) -> (BTreeMap<usize, Node>, usize, usize) {
                 edges.push(node_id(width, y, x + 1));
             }
 
-            out.insert(num, Node { value: num, edges });
+            out.insert(num, Node { id: num, edges });
         }
     }
 
@@ -71,8 +71,26 @@ fn create_nodes(map: Map) -> (BTreeMap<usize, Node>, usize, usize) {
 }
 
 struct Node {
-    value: usize,
+    id: usize,
     edges: Vec<usize>,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq)]
+struct State {
+    distance: usize,
+    id: usize,
+}
+
+impl PartialOrd for State {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for State {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other.distance.cmp(&self.distance)
+    }
 }
 
 fn dijkstra(
@@ -81,37 +99,30 @@ fn dijkstra(
 ) -> (HashMap<usize, usize>, HashMap<usize, Option<usize>>) {
     let mut distance = HashMap::new();
     let mut prev = HashMap::new();
-    let mut q = Vec::new();
-    let mut visited = HashMap::new();
+    let mut q = BinaryHeap::new();
+    let mut visited = HashSet::new();
 
     for (_, node) in nodes.iter() {
-        distance.insert(node.value, usize::MAX);
-        prev.insert(node.value, None);
-
-        q.push(node.value);
+        distance.insert(node.id, usize::MAX);
+        prev.insert(node.id, None);
     }
 
     distance.insert(source, 0);
+    q.push(State{distance: 0, id: source});
 
-    while !q.is_empty() {
-        q.sort_by(|a, b| distance[b].cmp(&distance[a]));
+    while let Some(u) = q.pop() {
+        visited.insert(u.id);
 
-        let u = &nodes[&q.pop().unwrap()];
-
-        visited.insert(u.value, true);
-
-        for vc in u.edges.iter() {
-            if visited.contains_key(vc) {
+        for vc in nodes[&u.id].edges.iter() {
+            if visited.contains(vc) {
                 continue;
             }
-            if !nodes.contains_key(vc) {
-                println!("key: {}", *vc);
-            }
             let v = &nodes[vc];
-            let temp_dist = distance[&u.value].saturating_add(1);
-            if temp_dist < distance[&v.value] {
-                distance.insert(v.value, temp_dist);
-                prev.insert(v.value, Some(u.value));
+            let temp_dist = distance[&u.id].saturating_add(1);
+            if temp_dist < distance[&v.id] {
+                q.push(State{distance: temp_dist, id: v.id});
+                distance.insert(v.id, temp_dist);
+                prev.insert(v.id, Some(u.id));
             }
         }
     }
