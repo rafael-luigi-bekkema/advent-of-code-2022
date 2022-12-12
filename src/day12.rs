@@ -94,7 +94,7 @@ impl Ord for State {
 }
 
 fn dijkstra(
-    nodes: BTreeMap<usize, Node>,
+    nodes: &BTreeMap<usize, Node>,
     source: usize,
 ) -> (HashMap<usize, usize>, HashMap<usize, Option<usize>>) {
     let mut distance = HashMap::new();
@@ -133,9 +133,34 @@ fn dijkstra(
 fn _a(input: Vec<impl AsRef<str>>) -> usize {
     let map = parse_map(input.iter().map(|s| s.as_ref()).collect());
     let (map, start, target) = create_nodes(map);
-    let (dist, _prev) = dijkstra(map, start);
+    let (dist, _prev) = dijkstra(&map, start);
 
     dist[&target]
+}
+
+fn _b(input: Vec<impl AsRef<str>>) -> usize {
+    let map = parse_map(input.iter().map(|s| s.as_ref()).collect());
+
+    let mut starts = Vec::new();
+    for (y, row) in map.iter().enumerate() {
+        for (x, val) in row.iter().enumerate() {
+            if *val == 'S' || *val == 'a' {
+                starts.push(y * row.len() +  x);
+            }
+        }
+    }
+
+    let (map, _, target) = create_nodes(map);
+
+    let mut min_dist = usize::MAX;
+    for start in starts {
+        let (dist, _prev) = dijkstra(&map, start);
+        if dist[&target] < min_dist {
+            min_dist = dist[&target]
+        }
+    }
+
+    min_dist
 }
 
 #[cfg(test)]
@@ -155,5 +180,20 @@ abdefghi";
     #[test]
     fn a2() {
         assert_eq!(370, _a(load_lines(12)));
+    }
+
+    #[test]
+    fn b() {
+        let input = "Sabqponm
+abcryxxl
+accszExk
+acctuvwj
+abdefghi";
+        assert_eq!(29, _b(input.split('\n').collect()));
+    }
+
+    #[test]
+    fn b2() {
+        assert_eq!(363, _b(load_lines(12)));
     }
 }
