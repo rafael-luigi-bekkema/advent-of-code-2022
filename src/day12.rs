@@ -1,4 +1,7 @@
-use std::{collections::{BTreeMap, HashMap, BinaryHeap, HashSet}, cmp::Ordering};
+use std::{
+    cmp::Ordering,
+    collections::BinaryHeap,
+};
 
 use crate::aoc::load_lines;
 
@@ -6,68 +9,66 @@ pub fn a() -> usize {
     _a(load_lines(12))
 }
 
-type Map = Vec<Vec<char>>;
-
-fn parse_map(input: Vec<&str>) -> Map {
-    let mut result = Vec::new();
-    for line in input {
-        result.push(line.chars().collect());
-    }
-    result
+pub fn b() -> usize {
+    _b(load_lines(12))
 }
 
-fn elevation(value: char) -> char {
-    match value {
-        'S' => 'a',
-        'E' => 'z',
-        _ => value,
-    }
-}
-
-fn is_edge(from: char, to: char) -> bool {
-    (elevation(to) as isize - elevation(from) as isize) <= 1
-}
-
-fn node_id(width: usize, y: usize, x: usize) -> usize {
-    y * width + x
-}
-
-fn create_nodes(map: Map) -> (BTreeMap<usize, Node>, usize, usize) {
-    let mut out = BTreeMap::new();
+fn create_nodes(
+    map: Vec<&[u8]>,
+    start_markers: &[u8],
+) -> (Vec<Node>, Vec<usize>, usize) {
+    let mut out = Vec::new();
     let mut target = 0usize;
-    let mut pos = 0usize;
+    let mut starts = Vec::new();
     let width = map[0].len();
     let height = map.len();
 
+    let node_id = |y, x| y * width + x;
+
+    let elevation = |value| match value {
+        b'S' => b'a',
+        b'E' => b'z',
+        _ => value,
+    };
+
+    let is_edge = |fx: usize, fy: usize, tx: usize, ty: usize| {
+        let from = elevation(map[fy][fx]) as isize;
+        let to = elevation(map[ty][tx]) as isize;
+
+        to - from <= 1
+    };
+
     for (y, row) in map.iter().enumerate() {
         for (x, val) in row.iter().enumerate() {
-            let num = node_id(width, y, x);
-            match *val {
-                'S' => pos = num,
-                'E' => target = num,
-                _ => {}
+            let num = node_id(y, x);
+            if *val == b'E' {
+                target = num;
+            }
+
+            if start_markers.contains(val) {
+                starts.push(num);
             }
 
             let mut edges = Vec::new();
 
-            if y > 0 && is_edge(map[y][x], map[y - 1][x]) {
-                edges.push(node_id(width, y - 1, x));
+            if y > 0 && is_edge(x, y, x, y - 1) {
+                edges.push(node_id(y - 1, x));
             }
-            if (y + 1) < height && is_edge(map[y][x], map[y + 1][x]) {
-                edges.push(node_id(width, y + 1, x));
+            if (y + 1) < height && is_edge(x, y, x, y + 1) {
+                edges.push(node_id(y + 1, x));
             }
-            if x > 0 && is_edge(map[y][x], map[y][x - 1]) {
-                edges.push(node_id(width, y, x - 1));
+            if x > 0 && is_edge(x, y, x - 1, y) {
+                edges.push(node_id(y, x - 1));
             }
-            if (x + 1) < width && is_edge(map[y][x], map[y][x + 1]) {
-                edges.push(node_id(width, y, x + 1));
+            if (x + 1) < width && is_edge(x, y, x + 1, y) {
+                edges.push(node_id(y, x + 1));
             }
 
-            out.insert(num, Node { id: num, edges });
+            out.push(Node { id: num, edges });
         }
     }
 
-    (out, pos, target)
+    (out, starts, target)
 }
 
 struct Node {
@@ -93,70 +94,62 @@ impl Ord for State {
     }
 }
 
-fn dijkstra(
-    nodes: &BTreeMap<usize, Node>,
-    source: usize,
-) -> (HashMap<usize, usize>, HashMap<usize, Option<usize>>) {
-    let mut distance = HashMap::new();
-    let mut prev = HashMap::new();
+fn dijkstra(nodes: &[Node], source: usize, target: usize) -> Vec<usize> {
     let mut q = BinaryHeap::new();
-    let mut visited = HashSet::new();
 
-    for (_, node) in nodes.iter() {
-        distance.insert(node.id, usize::MAX);
-        prev.insert(node.id, None);
-    }
+    let mut distance = vec![usize::MAX; nodes.len()];
+    distance[source] = 0;
 
-    distance.insert(source, 0);
-    q.push(State{distance: 0, id: source});
+    q.push(State {
+        distance: 0,
+        id: source,
+    });
 
     while let Some(u) = q.pop() {
-        visited.insert(u.id);
+        if u.id == target {
+            break;
+        }
 
-        for vc in nodes[&u.id].edges.iter() {
-            if visited.contains(vc) {
+        for vc in nodes[u.id].edges.iter() {
+            if distance[*vc] < usize::MAX {
                 continue;
             }
-            let v = &nodes[vc];
-            let temp_dist = distance[&u.id].saturating_add(1);
-            if temp_dist < distance[&v.id] {
-                q.push(State{distance: temp_dist, id: v.id});
-                distance.insert(v.id, temp_dist);
-                prev.insert(v.id, Some(u.id));
+            let v = &nodes[*vc];
+            let temp_dist = distance[u.id].saturating_add(1);
+            if temp_dist < distance[v.id] {
+                q.push(State {
+                    distance: temp_dist,
+                    id: v.id,
+                });
+                distance[v.id] = temp_dist;
             }
         }
     }
 
-    (distance, prev)
+    distance
 }
 
 fn _a(input: Vec<impl AsRef<str>>) -> usize {
-    let map = parse_map(input.iter().map(|s| s.as_ref()).collect());
-    let (map, start, target) = create_nodes(map);
-    let (dist, _prev) = dijkstra(&map, start);
+    let (map, starts, target) = create_nodes(
+        input.iter().map(|s| s.as_ref().as_bytes()).collect(),
+        &[b'S'],
+    );
+    let dist = dijkstra(&map, starts[0], target);
 
-    dist[&target]
+    dist[target]
 }
 
 fn _b(input: Vec<impl AsRef<str>>) -> usize {
-    let map = parse_map(input.iter().map(|s| s.as_ref()).collect());
-
-    let mut starts = Vec::new();
-    for (y, row) in map.iter().enumerate() {
-        for (x, val) in row.iter().enumerate() {
-            if *val == 'S' || *val == 'a' {
-                starts.push(y * row.len() +  x);
-            }
-        }
-    }
-
-    let (map, _, target) = create_nodes(map);
+    let (map, starts, target) = create_nodes(
+        input.iter().map(|s| s.as_ref().as_bytes()).collect(),
+        &[b'S', b'a'],
+    );
 
     let mut min_dist = usize::MAX;
     for start in starts {
-        let (dist, _prev) = dijkstra(&map, start);
-        if dist[&target] < min_dist {
-            min_dist = dist[&target]
+        let dist = dijkstra(&map, start, target);
+        if dist[target] < min_dist {
+            min_dist = dist[target]
         }
     }
 
