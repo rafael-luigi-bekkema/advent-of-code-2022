@@ -8,7 +8,11 @@ const SAND: u8 = b'o';
 const SOURCE: u8 = b'+';
 
 pub fn a() -> usize {
-    _a(load_lines(14), "")
+    _a(load_lines(14), "a")
+}
+
+pub fn b() -> usize {
+    _b(load_lines(14), "b", 302)
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -43,8 +47,6 @@ fn create_map(lines: Vec<&str>, with_floor: bool, extra_width: usize) -> (Vec<Ve
         }
         items.push(subitems);
     }
-
-    println!("{} {} {} {}", minx, maxx, miny, maxy);
 
     if with_floor {
         maxy += 2;

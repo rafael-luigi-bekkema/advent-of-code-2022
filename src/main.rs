@@ -89,5 +89,6 @@ fn main() {
 
     if all || first_arg == "14" {
         println!("day 14a: {}", day14::a());
+        println!("day 14b: {}", day14::b());
     }
 }
