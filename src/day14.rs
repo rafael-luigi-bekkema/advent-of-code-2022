@@ -24,7 +24,7 @@ fn create_map(lines: Vec<&str>, with_floor: bool, extra_width: usize) -> (Vec<Ve
         let mut subitems = Vec::new();
         for coords in line.split(" -> ") {
             let (x, y): (isize, isize) = coords
-                .split_once(",")
+                .split_once(',')
                 .map(|(s1, s2)| (s1.parse().unwrap(), s2.parse().unwrap()))
                 .unwrap();
             if x < minx {
@@ -96,7 +96,7 @@ fn _b(lines: Vec<impl AsRef<str>>, suffix: &str, extra_width: usize) -> usize {
     let (mut grid, start) = create_map(lines.iter().map(|l| l.as_ref()).collect(), true, extra_width);
     let mut count = 0;
 
-    'outer: loop {
+    loop {
         let mut pos = start;
         loop {
             while grid[pos.y+1][pos.x] == EMPTY {
@@ -165,12 +165,12 @@ fn _a(lines: Vec<impl AsRef<str>>, suffix: &str) -> usize {
     count
 }
 
-fn print_map(grid: &Vec<Vec<u8>>, suffix: &str) {
+fn print_map(grid: &[Vec<u8>], suffix: &str) {
     let mut file = File::create(format!("output/day14{suffix}.txt")).unwrap();
 
     for (_, line) in grid.iter().enumerate() {
-        file.write(line).unwrap();
-        file.write(&[b'\n']).unwrap();
+        file.write_all(line).unwrap();
+        file.write_all(&[b'\n']).unwrap();
     }
 }
 
