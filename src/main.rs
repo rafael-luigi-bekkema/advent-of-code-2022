@@ -16,6 +16,7 @@ mod day12;
 mod day13;
 mod day14;
 mod day15;
+mod day16;
 
 fn main() {
     let first_arg = env::args().nth(1).unwrap_or(String::new());
@@ -96,5 +97,9 @@ fn main() {
     if all || first_arg == "15" {
         println!("day 15a: {}", day15::a());
         println!("day 15b: {}", day15::b());
+    }
+
+    if all || first_arg == "16" {
+        println!("day 16a: {}", day16::a());
     }
 }
